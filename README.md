@@ -18,8 +18,13 @@ Today, I started the project by setting everything up. I chose the insurance dom
 
 What I did:
  -Chose the insurance domain for churn prediction
+
  -Found and reviewed a relevant dataset
+
  -Defined the project goal and purpose
+
  -Set up a GitHub repository with organized folders
+
  -Added clear notes in the README
+ 
  -Committed and pushed the initial setup to GitHub
