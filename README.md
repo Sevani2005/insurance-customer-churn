@@ -12,14 +12,14 @@ Scikit-learn for quick baseline machine learning models
 
 LightGBM for super-fast, accurate predictions
 
-Day 1 – Project Initialization & Planning
+Day 1 – Project Setup & Planning
 
-Day 1 focused on setting up the project foundation. The insurance domain was finalized for customer churn prediction, and a suitable dataset was identified and reviewed at a high level. The GitHub repository was created with a clean project structure and proper documentation to support further development.
+Today, I started the project by setting everything up. I chose the insurance domain to predict customer churn and found a dataset for it. I also created a GitHub repository with a clean structure and added clear documentation to make future work easier.
 
-Key activities completed:
-  - Finalized the insurance domain for churn prediction
-  - Identified and reviewed a relevant insurance customer churn dataset
-  - Defined the project objective and business use case
-  - Created the GitHub repository and organized the folder structure
-  - Added clear project documentation in the README
-  - Committed and pushed the initial setup to GitHub
+What I did:
+ -Chose the insurance domain for churn prediction
+ -Found and reviewed a relevant dataset
+ -Defined the project goal and purpose
+ -Set up a GitHub repository with organized folders
+ -Added clear notes in the README
+ -Committed and pushed the initial setup to GitHub
