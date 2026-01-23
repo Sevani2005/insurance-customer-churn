@@ -18,13 +18,16 @@ Today, I started the project by setting everything up. I chose the insurance dom
 
 What I did:
  -Chose the insurance domain for churn prediction
-
  -Found and reviewed a relevant dataset
-
  -Defined the project goal and purpose
-
  -Set up a GitHub repository with organized folders
-
  -Added clear notes in the README
- 
  -Committed and pushed the initial setup to GitHub
+
+Day 2 – Exploratory Data Analysis (EDA)
+
+- Loaded the insurance churn dataset
+- Understood the columns and data types
+- Checked how many customers churned vs not churned
+- Observed basic patterns and relationships in the data
+- Got the data ready for model building
