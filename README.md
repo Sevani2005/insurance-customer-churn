@@ -14,18 +14,20 @@ LightGBM for super-fast, accurate predictions
 
 Day 1 – Project Setup & Planning
 
-Today, I started the project by setting everything up. I chose the insurance domain to predict customer churn and found a dataset for it. I also created a GitHub repository with a clean structure and added clear documentation to make future work easier.
+On day 1, I finalized the project idea and prepared the basic setup required to start development. I selected the insurance domain and planned how the churn prediction system would be built step by step.
 
 What I did:
- -Chose the insurance domain for churn prediction
- -Found and reviewed a relevant dataset
- -Defined the project goal and purpose
- -Set up a GitHub repository with organized folders
- -Added clear notes in the README
- -Committed and pushed the initial setup to GitHub
+ -Selected insurance customer churn as the project problem
+ -Identified a suitable dataset for the project
+ -Planned the overall project workflow
+ -Created the project folder structure
+ -Initialized the GitHub repository and pushed the initial file
 
 Day 2 – Exploratory Data Analysis (EDA)
 
+On day2, I focused on understanding the dataset in detail. I explored the structure of the data, analyzed customer churn distribution, and identified important patterns that would help in building an effective prediction model.
+
+What I did:
 - Loaded the insurance churn dataset
 - Understood the columns and data types
 - Checked how many customers churned vs not churned
