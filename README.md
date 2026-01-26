@@ -28,20 +28,18 @@ Day 2 – Exploratory Data Analysis (EDA)
 On day2, I focused on understanding the dataset in detail. I explored the structure of the data, analyzed customer churn distribution, and identified important patterns that would help in building an effective prediction model.
 
 What I did:
+ -Loaded the insurance churn dataset
+ -Understood the columns and data types
+ -Checked how many customers churned vs not churned
+ -Observed basic patterns and relationships in the data
+ -Got the data ready for model building 
+ 
+ Day 3 – Model Development
 
-* Loaded the insurance churn dataset
-* Understood the columns and data types
-* Checked how many customers churned vs not churned
-* Observed basic patterns and relationships in the data
-* Got the data ready for model building 
-* 
-* &nbsp;Day 3 – Model Development
-* 
-* On Day 3, I worked on building the churn prediction model using machine learning.
-* I focused on training the model and preparing it for future predictions.
-* 
-* What I did:
-* -Selected LightGBM algorithm for churn prediction
-* -split the dataset into training and testing sets
-* -Trained the model using the training data
-* -Saved the trained logic inside the src folder
+ On Day 3, I worked on building the churn prediction model using machine learning.I focused on training the model and preparing it for future predictions.
+
+What I did:
+ -Selected LightGBM algorithm for churn prediction
+ -split the dataset into training and testing sets
+ -Trained the model using the training data
+ -Saved the trained logic inside the src folder
