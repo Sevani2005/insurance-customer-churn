@@ -52,3 +52,31 @@ What I did:
  -Looked at feature importance
  -Analyzed predictions and results
  -Added insights in model_insights.ipynb
+Day 5 – Model Deployment & Serialization
+On Day 5, I finalized the model training process and prepared it for production by saving the trained binary.
+
+What I did:
+- Refined the training script for better performance
+- Evaluated the final LightGBM model metrics
+- Serialized the trained model into `models/churn_model.pkl` for UI integration
+- Organized the repository for application development
+
+Day 6 – Interactive AI Dashboard
+Today, I developed a high-performance web interface to make the model accessible to business users.
+
+What I did:
+- Built a multi-tab Streamlit dashboard
+- Implemented real-time single customer churn prediction
+- Developed a batch analysis tool for bulk processing customer lists
+- Integrated Plotly visualizations for risk distribution and portfolio analytics
+- Added automated business "Next Step" recommendations based on risk scores
+
+Day 7 – Optimization & Final Polish
+On the final day, I focused on making the application production-ready and professional.
+
+What I did:
+- Refined the UI to meet corporate design standards (Solid colors & Clean typography)
+- Removed decorative elements to ensure a professional, hand-built aesthetic
+- Optimized model loading logic using resource caching
+- Finalized requirements.txt and project documentation for deployment
+- Verified all features (Single & Batch Analysis) for 100% accuracy
