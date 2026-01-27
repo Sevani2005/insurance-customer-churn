@@ -1,21 +1,7 @@
-# Core Data Science Libraries
+streamlit
 pandas
 numpy
 scikit-learn
-
-# Machine Learning
 lightgbm
 joblib
-
-# Visualization
-matplotlib
-seaborn
 plotly
-
-# Web Framework
-streamlit
-
-# Jupyter Notebooks
-jupyter
-notebook
-ipykernel
