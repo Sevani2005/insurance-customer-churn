@@ -79,9 +79,7 @@ What I did:
 - Fixed small bugs to make sure everything runs perfectly.
 - Finalized the documentation and requirements for the launch.
 
----
-
-### 🛡️ Conclusion
+ Conclusion
 This project was a journey from raw data to a real-world business tool. By combining **LightGBM Machine Learning** with a clean **Streamlit Dashboard**, I've created a system that doesn't just predict the future—it helps insurance companies change it. 
 
 Through this 7-day process, I’ve built a bridge between complex AI logic and actionable business decisions. This project is now fully ready to help retention teams save customers and grow their business.
