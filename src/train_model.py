@@ -102,18 +102,18 @@ print("Risk Level:", risk)
 print("\nSuggested Action:")
 
 if risk == "High Risk":
-    print("→ Immediate retention action required")
-    print("→ Offer discounts or personalized plans")
-    print("→ Priority customer support")
+    print("-> Immediate retention action required")
+    print("-> Offer discounts or personalized plans")
+    print("-> Priority customer support")
 
 elif risk == "Medium Risk":
-    print("→ Monitor customer closely")
-    print("→ Send engagement offers")
-    print("→ Improve service communication")
+    print("-> Monitor customer closely")
+    print("-> Send engagement offers")
+    print("-> Improve service communication")
 
 else:
-    print("→ Customer is stable")
-    print("→ Normal follow-up and engagement")
+    print("-> Customer is stable")
+    print("-> Normal follow-up and engagement")
 
 
 print("\nNew Customer Prediction ")
