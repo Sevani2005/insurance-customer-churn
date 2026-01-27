@@ -7,8 +7,13 @@ from sklearn.metrics import accuracy_score, classification_report, confusion_mat
 import lightgbm as lgb
 
 
+import os
 
-data = pd.read_csv("data/Insurance_Churn_ParticipantsData/Train.csv")
+# Get the base directory of the project
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+data_path = os.path.join(BASE_DIR, "data", "Insurance_Churn_ParticipantsData", "Train.csv")
+
+data = pd.read_csv(data_path)
 
 X = data.drop(columns=["labels"])
 y = data["labels"]
@@ -151,4 +156,5 @@ else:
     print("Suggested Action: Customer is stable")
 
 import joblib
-joblib.dump(model, "models/churn_model.pkl")
+model_save_path = os.path.join(BASE_DIR, "models", "churn_model.pkl")
+joblib.dump(model, model_save_path)
