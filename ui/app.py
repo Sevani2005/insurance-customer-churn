@@ -125,21 +125,21 @@ st.markdown("""
         text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
     }
     
-    /* Glassmorphism cards */
+    /* Cards Adjustment for Visibility */
     .glass-card {
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(10px);
+        background: #1e293b;
         border-radius: 15px;
         border: 1px solid rgba(255, 255, 255, 0.1);
         padding: 1.5rem;
         margin: 1rem 0;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         transition: all 0.3s ease;
+        color: #f1f5f9;
     }
     
     .glass-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 12px 40px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 12px 40px rgba(93, 95, 239, 0.2);
     }
     
     /* Section headers with solid underline */
@@ -209,15 +209,15 @@ st.markdown("""
     
     /* Metric card colors */
     .metric-card {
-        background: rgba(255, 255, 255, 0.03);
+        background: #1e293b;
         padding: 1.5rem;
         border-radius: 12px;
         text-align: center;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         border: 1px solid rgba(255, 255, 255, 0.1);
     }
     .metric-label { font-size: 0.9rem; color: #94a3b8; margin-bottom: 0.5rem; }
-    .metric-value { font-size: 2.2rem; font-weight: 800; margin: 0; }
+    .metric-value { font-size: 2.2rem; font-weight: 800; margin: 0; color: #f1f5f9; }
     .metric-delta { font-size: 0.8rem; margin-top: 0.5rem; }
     
     .color-high { color: #ef4444; }
@@ -230,10 +230,17 @@ st.markdown("""
         background: #5d5fef;
     }
     
-    /* Sidebar styling with solid color */
+    /* Sidebar styling for Dark Theme */
     [data-testid="stSidebar"] {
-        background: #f1f5f9;
-        border-right: 1px solid #e2e8f0;
+        background: #1e293b;
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    [data-testid="stSidebar"] h3, 
+    [data-testid="stSidebar"] label, 
+    [data-testid="stSidebar"] p,
+    [data-testid="stSidebar"] li {
+        color: #f1f5f9 !important;
     }
     
     /* Input field enhancements */
@@ -340,10 +347,10 @@ with st.sidebar:
         for idx, entry in enumerate(reversed(st.session_state.prediction_history[-5:])):
             color = "#ef4444" if entry['risk'] == "High Risk" else "#f59e0b" if entry['risk'] == "Medium Risk" else "#10b981"
             st.markdown(f"""
-            <div style="background: white; border-left: 5px solid {color}; padding: 10px; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
-                <div style="font-size: 0.8rem; color: #64748b; font-weight: 600;">Check #{len(st.session_state.prediction_history)-idx}</div>
-                <div style="font-weight: 700; color: #1e293b;">{entry['risk']}</div>
-                <div style="font-size: 0.9rem; color: #5d5fef;">{entry['prob']:.1f}% Probability</div>
+            <div style="background: #1e293b; border-left: 5px solid {color}; padding: 10px; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05);">
+                <div style="font-size: 0.7rem; color: #94a3b8;">Check #{len(st.session_state.prediction_history)-idx}</div>
+                <div style="font-weight: 700; color: #f1f5f9;">{entry['risk']}</div>
+                <div style="font-size: 0.8rem; color: #6366f1;">{entry['prob']:.1f}% Probability</div>
             </div>
             """, unsafe_allow_html=True)
 
