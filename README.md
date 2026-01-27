@@ -1,4 +1,5 @@
 Insurance Customer Churn Prediction
+🚀 **Live App:** [View Dashboard](https://insurance-customer-churn-5x6tuwr3irwxs7frwntk26.streamlit.app/)
 
 I've built this machine learning project to help insurance companies figure out which customers might cancel their policies soon. By digging into customer habits and policy details, the model spots at-risk folks early, so teams can reach out with personalized offers or support to keep them onboard and boost retention.
 
@@ -79,7 +80,33 @@ What I did:
 - Fixed small bugs to make sure everything runs perfectly.
 - Finalized the documentation and requirements for the launch.
 
+---
+
+ Visual Project Overview
+
+#### 1. Backend & AI Logic
+Here is how the AI model looks when it's being trained. It shows the accuracy and how the "brain" thinks.
+![Model Performance](screenshots/backend_metrics.png)
+![Detailed Analysis](screenshots/backend_analysis.png)
+
+#### 2. The Main Dashboard
+This is the simple and clean website where users can enter customer info.
+![Main UI](screenshots/ui_main.png)
+![Inputs](screenshots/ui_inputs.png)
+
+#### 3. Real-Time Results
+When you click predict, the AI gives a score and tells you exactly what to do next.
+![Prediction Result](screenshots/ui_prediction.png)
+
+#### 4. Large Scale Analysis
+This shows what happens when we check thousands of customers at once with charts and tables.
+![Batch Stats](screenshots/ui_batch_summary.png)
+![Visual Charts](screenshots/ui_batch_charts.png)
+![Data Table](screenshots/ui_batch_results.png)
+![Alerts](screenshots/ui_batch_alerts.png)
+
 Conclusion
+
 This project was a journey from raw data to a real-world business tool. By combining **LightGBM Machine Learning** with a clean **Streamlit Dashboard**, I've created a system that doesn't just predict the future—it helps insurance companies change it. 
 
 Through this 7-day process, I’ve built a bridge between complex AI logic and actionable business decisions. This project is now fully ready to help retention teams save customers and grow their business.
