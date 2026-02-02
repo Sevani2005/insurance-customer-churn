@@ -649,36 +649,6 @@ with tab2:
                 )
                 st.plotly_chart(fig_bar, use_container_width=True)
             
-            # Feature Importance
-            st.markdown('<div class="section-header">Key Prediction Drivers</div>', unsafe_allow_html=True)
-            
-            # Get feature importance from LightGBM model
-            import numpy as np
-            importance = model.feature_importances_
-            # Map features to friendly names if possible
-            feature_names = [
-                "Age", "Tenure", "Monthly Premium", "Total Charges", 
-                "Policies Count", "Claim Count", "Support Calls", "Payment Method",
-                "Auto Renewal", "Policy Type", "Gender", "Late Payments",
-                "Complaints", "Region", "Login Count", "Discount Availed"
-            ]
-            
-            importance_df = pd.DataFrame({
-                'Feature': feature_names,
-                'Importance': importance
-            }).sort_values(by='Importance', ascending=False).head(10)
-            
-            fig_importance = px.bar(
-                importance_df,
-                x='Importance',
-                y='Feature',
-                orientation='h',
-                title="Top 10 Factors Influencing Churn",
-                color='Importance',
-                color_continuous_scale='Viridis'
-            )
-            fig_importance.update_layout(yaxis={'categoryorder':'total ascending'})
-            st.plotly_chart(fig_importance, use_container_width=True)
             
             # Results Table
             st.markdown('<div class="section-header">Customer Results</div>', unsafe_allow_html=True)
