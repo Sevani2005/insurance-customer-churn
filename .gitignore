@@ -1,10 +1,9 @@
-# Byte-compiled / optimized / DLL files
-__pycache__/
+ 
 *.py[cod]
 *$py.class
 *.so
 
-# Distribution / packaging
+ / packaging
 .Python
 build/
 develop-eggs/
@@ -22,11 +21,9 @@ wheels/
 .installed.cfg
 *.egg
 
-# Jupyter Notebook
 .ipynb_checkpoints
 *.ipynb_checkpoints/
 
-# Environment
 .env
 .venv
 env/
@@ -35,32 +32,23 @@ ENV/
 env.bak/
 venv.bak/
 
-# IDE
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 
-# OS
 .DS_Store
 Thumbs.db
 desktop.ini
 
-# Data files (if large)
+
 *.csv
 *.xlsx
 *.parquet
 !data/Insurance_Churn_ParticipantsData/*.csv
 
-# Model files (if too large for git)
-# models/*.pkl
-# models/*.h5
-# models/*.joblib
-
-# Logs
 *.log
 logs/
 
-# Streamlit
 .streamlit/secrets.toml

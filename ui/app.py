@@ -1,31 +1,48 @@
 import streamlit as st
 import pandas as pd
 import lightgbm as lgb
-from sklearn.model_selection import train_test_split
 import os
+import sys
 import plotly.express as px
 import plotly.graph_objects as go
-
-
-# -----------------------------
-# Load data & train model
-# -----------------------------
 import joblib
+import time
+from typing import Dict, Any
 
+
+# Add project root to sys.path for modular imports
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if PROJECT_ROOT not in sys.path:
+    sys.path.append(PROJECT_ROOT)
+
+from src.config import (
+    GENDER_MAP, AUTO_RENEWAL_MAP, DISCOUNT_MAP, PAYMENT_MAP,
+    POLICY_TYPE_MAP, REGION_MAP, PAGE_TITLE, PAGE_ICON, CUSTOM_CSS
+)
+from src.utils import classify_risk, get_risk_badge_html, apply_custom_styles, validate_input, plot_feature_importance, generate_excel_report
+from src.logger import logger
+
+# -----------------------------
+# Load data & model
+# -----------------------------
 @st.cache_resource
 def load_model():
-    script_dir = os.path.dirname(os.path.abspath(__file__))
+    """
+    Loads the trained LightGBM model from the local disk.
+    Uses st.cache_resource to avoid reloading the model on every rerun.
+    """
+    logger.info("Starting model loading process...")
 
-    model_path = os.path.join(
-        script_dir, "..", "models", "churn_model.pkl"
-    )
-
-    model = joblib.load(model_path)
-
-    feature_cols = [f"feature_{i}" for i in range(16)]
-
-    return model, feature_cols
-
+    try:
+        model_path = os.path.join(PROJECT_ROOT, "models", "churn_model.pkl")
+        model = joblib.load(model_path)
+        feature_cols = [f"feature_{i}" for i in range(16)]
+        logger.info(f"Model successfully loaded from {model_path}")
+        return model, feature_cols
+    except Exception as e:
+        logger.error(f"Failed to load model: {str(e)}")
+        st.error("Critical Error: AI model file not found or corrupted.")
+        return None, []
 
 model, feature_cols = load_model()
 
@@ -34,265 +51,27 @@ model, feature_cols = load_model()
 # -----------------------------
 @st.cache_data
 def load_test_data():
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    test_path = os.path.join(script_dir, "..", "data", "Insurance_Churn_ParticipantsData", "Test.csv")
+    """
+    Loads the test CSV dataset for batch analysis.
+    Uses st.cache_data for faster performance on subsequent loads.
+    """
+    test_path = os.path.join(PROJECT_ROOT, "data", "Insurance_Churn_ParticipantsData", "Test.csv")
+
     test_data = pd.read_csv(test_path)
     return test_data
 
 # -----------------------------
-# Risk classification
-# -----------------------------
-def classify_risk(prob):
-    if prob >= 0.7:
-        return "High Risk"
-    elif prob >= 0.4:
-        return "Medium Risk"
-    else:
-        return "Low Risk"
-
-# -----------------------------
-# Categorical mappings (UI → Model)
-# -----------------------------
-GENDER_MAP = {"Male": 0, "Female": 1}
-
-AUTO_RENEWAL_MAP = {"No": 0, "Yes": 1}
-
-DISCOUNT_MAP = {"No": 0, "Yes": 1}
-
-PAYMENT_MAP = {
-    "Credit Card": 0,
-    "Debit Card": 1,
-    "UPI": 2,
-    "Net Banking": 3
-}
-
-POLICY_TYPE_MAP = {
-    "Basic": 0,
-    "Silver": 1,
-    "Gold": 2
-}
-
-REGION_MAP = {
-    "North": 0,
-    "South": 1,
-    "East": 2,
-    "West": 3
-}
-
-# -----------------------------
-# UI
+# UI Initialization
 # -----------------------------
 st.set_page_config(
-    page_title="Insurance Churn Prediction",
-    page_icon="🛡️",
+    page_title=PAGE_TITLE,
+    page_icon=PAGE_ICON,
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Enhanced Custom CSS
-st.markdown("""
-<style>
-    /* Import modern font */
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
-    
-    * {
-        font-family: 'Inter', sans-serif;
-    }
-    
-    /* Hero section with solid background */
-    .hero-section {
-        background: #5d5fef;
-        padding: 3rem 2rem;
-        border-radius: 20px;
-        margin-bottom: 2rem;
-        text-align: center;
-        box-shadow: 0 10px 40px rgba(93, 95, 239, 0.2);
-    }
-    
-    .hero-title {
-        color: white;
-        font-size: 3rem;
-        font-weight: 800;
-        margin-bottom: 0.5rem;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-        letter-spacing: -1px;
-    }
-    
-    .hero-subtitle {
-        color: rgba(255, 255, 255, 0.95);
-        font-size: 1.3rem;
-        font-weight: 400;
-        text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-    }
-    
-    /* Cards Adjustment for Visibility */
-    .glass-card {
-        background: #1e293b;
-        border-radius: 15px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        padding: 1.5rem;
-        margin: 1rem 0;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        transition: all 0.3s ease;
-        color: #f1f5f9;
-    }
-    
-    .glass-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 12px 40px rgba(93, 95, 239, 0.2);
-    }
-    
-    /* Section headers with solid underline */
-    .section-header {
-        color: #5d5fef;
-        font-size: 1.5rem;
-        font-weight: 700;
-        margin-top: 2rem;
-        margin-bottom: 1.5rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 3px solid #5d5fef;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    
-    /* Info card with solid border */
-    .info-card {
-        background: #f8fafc;
-        padding: 1.5rem;
-        border-radius: 12px;
-        border-left: 5px solid #5d5fef;
-        margin: 1rem 0;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    }
-    
-    .info-card h4 {
-        color: #667eea;
-        font-weight: 700;
-        margin-bottom: 1rem;
-    }
-    
-    .info-card ul {
-        margin-left: 1rem;
-    }
-    
-    .info-card li {
-        margin-bottom: 0.5rem;
-        line-height: 1.6;
-    }
-    
-    /* Enhanced button with solid color */
-    .stButton>button {
-        width: 100%;
-        background: #5d5fef;
-        color: white;
-        font-size: 1.2rem;
-        font-weight: 700;
-        padding: 1rem 2rem;
-        border-radius: 50px;
-        border: none;
-        box-shadow: 0 8px 25px rgba(93, 95, 239, 0.3);
-        transition: all 0.3s ease;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
-    
-    .stButton>button:hover {
-        transform: translateY(-3px) scale(1.02);
-        box-shadow: 0 12px 35px rgba(93, 95, 239, 0.5);
-        background: #4749d4;
-    }
-    
-    .stButton>button:active {
-        transform: translateY(-1px);
-    }
-    
-    /* Metric card colors */
-    .metric-card {
-        background: #1e293b;
-        padding: 1.5rem;
-        border-radius: 12px;
-        text-align: center;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    .metric-label { font-size: 0.9rem; color: #94a3b8; margin-bottom: 0.5rem; }
-    .metric-value { font-size: 2.2rem; font-weight: 800; margin: 0; color: #f1f5f9; }
-    .metric-delta { font-size: 0.8rem; margin-top: 0.5rem; }
-    
-    .color-high { color: #ef4444; }
-    .color-medium { color: #f59e0b; }
-    .color-low { color: #10b981; }
-    .color-neutral { color: #667eea; }
-    
-    /* Progress bar styling */
-    .stProgress > div > div > div > div {
-        background: #5d5fef;
-    }
-    
-    /* Sidebar styling for Dark Theme */
-    [data-testid="stSidebar"] {
-        background: #1e293b;
-        border-right: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    [data-testid="stSidebar"] h3, 
-    [data-testid="stSidebar"] label, 
-    [data-testid="stSidebar"] p,
-    [data-testid="stSidebar"] li {
-        color: #f1f5f9 !important;
-    }
-    
-    /* Input field enhancements */
-    .stNumberInput > div > div > input,
-    .stSelectbox > div > div > select {
-        border-radius: 10px;
-        border: 2px solid rgba(102, 126, 234, 0.3);
-        transition: all 0.3s ease;
-    }
-    
-    .stNumberInput > div > div > input:focus,
-    .stSelectbox > div > div > select:focus {
-        border-color: #667eea;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-    }
+apply_custom_styles(CUSTOM_CSS)
 
-    /* Next Step Badge styling */
-    .next-step-badge {
-        display: inline-block;
-        padding: 0.5rem 1.5rem;
-        border-radius: 50px;
-        font-weight: 700;
-        font-size: 1rem;
-        margin-top: 1.5rem;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        animation: fadeIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-    
-    .badge-high {
-        background: rgba(239, 68, 68, 0.1);
-        color: #ef4444;
-        border: 1px solid #ef4444;
-    }
-    
-    .badge-medium {
-        background: rgba(245, 158, 11, 0.1);
-        color: #f59e0b;
-        border: 1px solid #f59e0b;
-    }
-    
-    .badge-low {
-        background: rgba(16, 185, 129, 0.1);
-        color: #10b981;
-        border: 1px solid #10b981;
-    }
-    
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(15px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-</style>
-""", unsafe_allow_html=True)
 
 # Hero Section
 st.markdown("""
@@ -355,13 +134,16 @@ with st.sidebar:
             """, unsafe_allow_html=True)
 
 # Create tabs for different features
-tab1, tab2 = st.tabs(["Single Customer Prediction", "Batch Customer Analysis"])
+tab1, tab2, tab3 = st.tabs(["Single Customer Prediction", "Batch Customer Analysis", "What-If Simulation"])
+
 
 # ============================================================================
 # TAB 1: SINGLE CUSTOMER PREDICTION
 # ============================================================================
 with tab1:
-    input_data = {}
+    input_data: Dict[str, Any] = {}
+
+
     
     # Demographics Section (3 features)
     st.markdown('<div class="section-header">Customer Demographics</div>', unsafe_allow_html=True)
@@ -448,18 +230,28 @@ with tab1:
     st.markdown("<br>", unsafe_allow_html=True)
     predict_button = st.button("Predict Churn Risk", use_container_width=True, key="single_predict")
     if predict_button:
+        if not validate_input(input_data):
+            st.stop()
+            
         with st.spinner('Analyzing customer data with AI...'):
-            import time
             time.sleep(0.8)
+
             
-            prob = model.predict_proba(input_df)[0][1]
-            risk = classify_risk(prob)
-            
-            # Save to History
-            st.session_state.prediction_history.append({
-                'prob': prob * 100,
-                'risk': risk
-            })
+            try:
+                prob = model.predict_proba(input_df)[0][1]
+                risk = classify_risk(prob)
+                
+                logger.info(f"Single Prediction: Probability={prob:.4f}, Risk={risk}")
+                
+                # Save to History
+                st.session_state.prediction_history.append({
+                    'prob': prob * 100,
+                    'risk': risk
+                })
+            except Exception as e:
+                logger.error(f"Prediction error: {str(e)}")
+                st.error("An error occurred during prediction. Check logs for details.")
+                prob, risk = 0.0, "Error"
         
         # Results Section
         st.markdown('<div class="section-header">Prediction Results</div>', unsafe_allow_html=True)
@@ -511,6 +303,12 @@ with tab1:
             badge_html = '<div class="next-step-badge badge-low">NEXT STEP: Offer Loyalty Program</div>'
         
         st.markdown(badge_html, unsafe_allow_html=True)
+
+        # Feature Importance section
+        st.markdown('<div class="section-header">Decision Factors</div>', unsafe_allow_html=True)
+        fig_imp = plot_feature_importance(model, feature_cols)
+        st.plotly_chart(fig_imp, use_container_width=True)
+
 
 # ============================================================================
 # TAB 2: BATCH CUSTOMER ANALYSIS
@@ -673,15 +471,27 @@ with tab2:
                 hide_index=True
             )
             
-            # Download button
-            csv = results_df.to_csv(index=False)
-            st.download_button(
-                label="Download Results as CSV",
-                data=csv,
-                file_name=f"churn_predictions_{num_customers}_customers.csv",
-                mime="text/csv",
-                use_container_width=True
-            )
+            # Download buttons
+            c1, c2 = st.columns(2)
+            with c1:
+                csv = results_df.to_csv(index=False)
+                st.download_button(
+                    label="Download Results as CSV",
+                    data=csv,
+                    file_name=f"churn_predictions_{num_customers}_customers.csv",
+                    mime="text/csv",
+                    use_container_width=True
+                )
+            with c2:
+                excel_data = generate_excel_report(results_df)
+                st.download_button(
+                    label="Download Results as Excel",
+                    data=excel_data,
+                    file_name=f"churn_predictions_{num_customers}_customers.xlsx",
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    use_container_width=True
+                )
+
             
             # High Risk Customers Alert
             if high_risk_count > 0:
@@ -690,7 +500,77 @@ with tab2:
                 st.error(f"**{high_risk_count} customers require immediate attention!**")
                 st.dataframe(high_risk_df[['Customer_ID', 'Probability_%', 'Age', 'Tenure', 'Monthly_Premium']], use_container_width=True)
 
-# Footer
+# ============================================================================
+# TAB 3: WHAT-IF SIMULATION
+# ============================================================================
+with tab3:
+    st.markdown('<div class="section-header">What-If Retention Simulator</div>', unsafe_allow_html=True)
+    st.markdown("""
+    <div class="glass-card">
+    Simulate how business interventions (like discounts or policy changes) impact a customer's churn risk.
+    </div>
+    """, unsafe_allow_html=True)
+    
+    col1, col2 = st.columns([1, 1])
+    
+    with col1:
+        st.subheader("Base Customer Profile")
+        base_age = st.slider("Customer Age", 18, 100, 45)
+        base_tenure = st.slider("Tenure (Months)", 0, 120, 24)
+        base_premium = st.number_input("Current Monthly Premium ($)", value=250.0)
+        base_discount = st.radio("Has Discount?", ["No", "Yes"], index=0)
+    
+    with col2:
+        st.subheader("Proposed Interventions")
+        new_premium = st.number_input("Adjusted Premium ($)", value=base_premium * 0.9, help="Try lowering the premium to see the impact")
+        new_discount = st.radio("Apply New Discount?", ["No", "Yes"], index=1)
+        improve_support = st.checkbox("Improve Support (Zero Complaints/Calls)", value=True)
+
+    if st.button("Run Simulation", use_container_width=True):
+        # Create base and simulated dataframes
+        base_data = {f"feature_{i}": 0.0 for i in range(16)}
+        base_data["feature_0"] = base_age
+        base_data["feature_1"] = base_tenure
+        base_data["feature_2"] = base_premium
+        base_data["feature_15"] = DISCOUNT_MAP[base_discount]
+        
+        sim_data = base_data.copy()
+        sim_data["feature_2"] = new_premium
+        sim_data["feature_15"] = DISCOUNT_MAP[new_discount]
+        if improve_support:
+            sim_data["feature_6"] = 0 # Support calls
+            sim_data["feature_12"] = 0 # Complaints
+            
+        base_df = pd.DataFrame([base_data])
+        sim_df = pd.DataFrame([sim_data])
+        
+        base_prob = model.predict_proba(base_df)[0][1]
+        sim_prob = model.predict_proba(sim_df)[0][1]
+        
+        # Display Results
+        st.markdown("---")
+        c1, c2 = st.columns(2)
+        
+        diff = (sim_prob - base_prob) * 100
+        
+        with c1:
+            st.metric("Base Churn Risk", f"{base_prob*100:.1f}%")
+        with c2:
+            st.metric("Simulated Risk", f"{sim_prob*100:.1f}%", delta=f"{diff:.1f}%", delta_color="inverse")
+            
+        if diff < 0:
+            st.success(f"Success! The proposed changes reduce churn risk by **{abs(diff):.1f}%**.")
+        else:
+            st.warning("Warning: The proposed changes do not significantly reduce churn risk.")
+
+        # Comparison Chart
+        fig = go.Figure(data=[
+            go.Bar(name='Base', x=['Churn Risk'], y=[base_prob*100], marker_color='#94a3b8'),
+            go.Bar(name='Simulated', x=['Churn Risk'], y=[sim_prob*100], marker_color='#5d5fef')
+        ])
+        fig.update_layout(title="Impact Visualization", barmode='group', height=300)
+        st.plotly_chart(fig, use_container_width=True)
+
 st.markdown("<br><br>", unsafe_allow_html=True)
 st.markdown("---")
 st.markdown("""

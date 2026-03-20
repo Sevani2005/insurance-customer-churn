@@ -1,105 +1,89 @@
-Insurance Customer Churn Prediction
- **Live App:** [View Dashboard](https://insurance-customer-churn-5x6tuwr3irwxs7frwntk26.streamlit.app/)
+# 🛡️ Insurance Customer Churn Prediction System
 
-I've built this machine learning project to help insurance companies figure out which customers might cancel their policies soon. By digging into customer habits and policy details, the model spots at-risk folks early, so teams can reach out with personalized offers or support to keep them onboard and boost retention.
+Live Industrial-Grade AI Dashboard for Customer Retention.
 
-Tech Stack:
+## 📌 Project Overview
 
-Python 
+This repository features an end-to-end Machine Learning solution for predicting insurance customer churn. It transforms raw customer data into actionable business intelligence using a high-performance **LightGBM** model and a modern **Streamlit** dashboard.
 
-Pandas & NumPy for data  processing
+The system is designed with **Industrial Standards** in mind, featuring:
+- **Modularity**: Clean separation of UI, business logic, and configuration.
+- **Robustness**: Pydantic-based input validation and comprehensive logging.
+- **Explainability (XAI)**: Feature importance visualizations to understand "why" a customer is at risk.
+- **Simulation**: A "What-If" tool for business stakeholders to test retention strategies.
 
-Scikit-learn for quick baseline machine learning models
+## 🏗️ System Architecture
 
-LightGBM for super-fast, accurate predictions
+The project follows a modular tiered architecture:
 
-Day 1 – Project Setup & Planning
+```mermaid
+graph TD
+    User([Insurance Agent]) --> UI[Streamlit UI]
+    UI --> Validation[Pydantic Schema]
+    UI --> ML[LightGBM Model]
+    UI --> Logic[Business Logic & Risk Mapping]
+    Logic --> Reports[Excel/CSV Reports]
+    UI --> Logs[(Audit Logs)]
+```
 
-Today, I started the project by setting everything up. I chose the insurance domain to predict customer churn and found a dataset for it. I also created a GitHub repository with a clean structure and added clear documentation to make future work easier.
+- **`ui/app.py`**: The main entry point (Dashboard).
+- **`src/utils.py`**: Core business logic, validation, and chart generation.
+- **`src/config.py`**: Centralized domain mappings and UI styling.
+- **`src/logger.py`**: Standardized logging for production auditing.
+- **`models/`**: Serialized model binaries.
 
-What I did:
- -Chose the insurance domain for churn prediction
- -Found and reviewed a relevant dataset
- -Defined the project goal and purpose
- -Set up a GitHub repository with organized folders
- -Added clear notes in the README
- -Committed and pushed the initial setup to GitHub
+## 🚀 Getting Started
 
-Day 2 – Exploratory Data Analysis (EDA)
+### Prerequisites
+- Python 3.10+
+- Virtual Environment (recommended)
 
-- Loaded the insurance churn dataset
-- Understood the columns and data types
-- Checked how many customers churned vs not churned
-- Observed basic patterns and relationships in the data
-- Got the data ready for model building
+### Installation
 
-Day 3 – Model Development
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/Sevani2005/insurance-customer-churn.git
+   cd insurance-customer-churn
+   ```
 
-On Day 3, I worked on building the churn prediction model using machine learning.
-I focused on training the model and preparing it for future predictions.
+2. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-What I did:
--Selected LightGBM algorithm for churn prediction
--split the dataset into training and testing sets
--Trained the model using the training data
--Saved the trained logic inside the src folder
+3. **Run the application:**
+   ```bash
+   streamlit run ui/app.py
+   ```
 
-Day 4 – Model Insights
+### Using Docker
 
-On day 4, I worked on understanding how the churn prediction model behaves.
+The project is fully containerized for easy deployment:
+```bash
+docker build -t insurance-churn-app .
+docker run -p 8501:8501 insurance-churn-app
+```
 
-What I did:
- -Checked model performance
- -Looked at feature importance
- -Analyzed predictions and results
- -Added insights in model_insights.ipynb
+## 📊 Key Features
 
-Day 5 – Saving the AI Logic
-Today, I focused on making sure the AI's "brain" was ready for the real world. After fine-tuning the model, I saved it as a file so that I could use it in my application without having to train it every single time. 
+### 1. Single Customer Prediction
+Input custom features to get an immediate risk score, automated recommended next steps, and a breakdown of decision factors.
 
-What I did:
-- Finalized the best version of my LightGBM model.
-- Saved the trained model into the `models/` folder.
-- Cleaned up my code folders to keep things organized.
+### 2. Batch Analysis
+Upload or load existing customer datasets to identify at-risk segments across the entire portfolio. Supports export to **Excel** and **CSV**.
 
-Day 6 – Building the Modern Dashboard
-This was an exciting day! I built a website (using Streamlit) so that anyone could actually use my AI. I wanted it to be more than just numbers, so I added interactive charts and a special feature that tells you exactly what to do next to keep a customer.
+### 3. What-If Retention Simulator
+Interactive sliders allow managers to simulate how changing policy terms (e.g., lowering premiums or applying discounts) impacts the churn probability in real-time.
 
-What I did:
-- Created a beautiful, interactive dashboard.
-- Added a "Single Prediction" tool for one-on-one checks.
-- Added a "Batch Analysis" tool to check thousands of customers at once.
-- Added visual charts to show where the risks are.
+## 🧪 Testing & Validation
 
-Day 7 – Polishing and Final Testing
-I spent the last day making everything look professional and fixing small bugs. I removed all the "toy" elements and went with a clean, solid design that looks like a real corporate tool. I also made sure all the files were synced and ready for deployment.
+Run unit tests to verify the risk classification logic:
+```bash
+python -m pytest tests/
+```
 
-What I did:
-- Cleaned up the UI for a professional "Solid Color" look.
-- Added a "Recent Checks" history feature to the sidebar.
-- Fixed small bugs to make sure everything runs perfectly.
-- Finalized the documentation and requirements for the launch.
-
-### 📸 Visual Project Overview
-
-#### 1. The Main Dashboard
-This is the simple and clean website where users can enter customer info.
-![Main UI](screenshots/ui_main.png)
-![Inputs](screenshots/ui_inputs.png)
-
-#### 2. Real-Time Results
-When you click predict, the AI gives a score and tells you exactly what to do next.
-![Prediction Result](screenshots/ui_prediction.png)
-
-#### 3. Large Scale Analysis
-This shows what happens when we check thousands of customers at once with charts and tables.
-![Batch Stats](screenshots/ui_batch_summary.png)
-![Visual Charts](screenshots/ui_batch_charts.png)
-![Data Table](screenshots/ui_batch_results.png)
-![Alerts](screenshots/ui_batch_alerts.png)
-
-Conclusion
-
-This project was a journey from raw data to a real-world business tool. By combining **LightGBM Machine Learning** with a clean **Streamlit Dashboard**, I've created a system that doesn't just predict the future—it helps insurance companies change it. 
-
-Through this 7-day process, I’ve built a bridge between complex AI logic and actionable business decisions. This project is now fully ready to help retention teams save customers and grow their business.
+## 🛠️ Tech Stack
+- **Modeling**: LightGBM, Scikit-learn
+- **Dashboard**: Streamlit, Plotly
+- **Data**: Pandas, NumPy
+- **Engineering**: Pydantic, Docker, Python-Logging, OpenPyXL
