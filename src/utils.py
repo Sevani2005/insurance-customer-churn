@@ -6,7 +6,7 @@ from typing import Dict, Any
 import pandas as pd
 import streamlit as st
 from pydantic import BaseModel, Field, ValidationError
-from .config import RISK_THRESHOLD_HIGH, RISK_THRESHOLD_MEDIUM
+from .config import RISK_THRESHOLD_HIGH, RISK_THRESHOLD_MEDIUM, FEATURE_NAMES_MAP
 
 class CustomerInputSchema(BaseModel):
     """
@@ -131,4 +131,58 @@ def generate_excel_report(df: pd.DataFrame) -> bytes:
         df.to_excel(writer, index=False, sheet_name='Churn Predictions')
     return output.getvalue()
 
+def plot_prediction_explanation(model, input_df):
+    """
+    Plots a SHAP-based local explanation for a single prediction.
+    Shows how much each feature contributed to this specific customer's risk.
+    """
+    import shap
+    import plotly.graph_objects as go
+    import numpy as np
 
+    # Calculate SHAP values for the single row
+    explainer = shap.TreeExplainer(model)
+    shap_values = explainer.shap_values(input_df)
+
+    # For LightGBM classification, shap_values is a list for [class0, class1] or just class1.
+    # Handle both cases.
+    if isinstance(shap_values, list):
+        # We want SHAP for class 1 (churn)
+        sv = shap_values[1][0]
+    else:
+        # Some LightGBM versions return values for class 1 only if binary
+        sv = shap_values[0]
+
+    # Prepare data for plotting
+    raw_features = input_df.columns
+    contributions = sv
+    
+    # Sort by magnitude of contribution
+    indices = np.argsort(np.abs(contributions))
+    top_indices = indices[-10:] # Top 10 factors
+
+    # Map raw names to readable names
+    sorted_features = [FEATURE_NAMES_MAP.get(raw_features[i], raw_features[i]) for i in top_indices]
+    sorted_contributions = [contributions[i] for i in top_indices]
+
+    # Create waterfall-like bar chart
+    colors = ['#ef4444' if c > 0 else '#10b981' for c in sorted_contributions]
+    
+    fig = go.Figure(go.Bar(
+        x=sorted_contributions,
+        y=sorted_features,
+        orientation='h',
+        marker_color=colors,
+        text=[f"{'+ ' if c > 0 else ''}{c:.3f}" for c in sorted_contributions],
+        textposition='auto',
+    ))
+
+    fig.update_layout(
+        title="Why this prediction? Local Explained Factors",
+        xaxis_title="Impact on Probability (High = Increases Risk)",
+        yaxis_title="Customer Feature",
+        height=450,
+        margin=dict(l=20, r=20, t=40, b=40)
+    )
+    
+    return fig

@@ -34,8 +34,28 @@ REGION_MAP = {
 RISK_THRESHOLD_HIGH = 0.7
 RISK_THRESHOLD_MEDIUM = 0.4
 
+# Feature names mapping for better UI display
+FEATURE_NAMES_MAP = {
+    "feature_0": "Age",
+    "feature_1": "Tenure (Months)",
+    "feature_2": "Monthly Premium ($)",
+    "feature_3": "Total Charges ($)",
+    "feature_4": "Number of Policies",
+    "feature_5": "Claim Count",
+    "feature_6": "Support Calls",
+    "feature_7": "Payment Method",
+    "feature_8": "Auto Renewal",
+    "feature_9": "Policy Type",
+    "feature_10": "Gender",
+    "feature_11": "Late Payments",
+    "feature_12": "Complaints Raised",
+    "feature_13": "Region",
+    "feature_14": "Online Login Count",
+    "feature_15": "Discount Availed"
+}
+
 # Updated UI Configuration to Pastel
-PAGE_TITLE = "Insurance Churn Prediction"
+PAGE_TITLE = "Insurance Churn AI"
 PAGE_ICON = "🛡️"
 
 # Pastel CSS Styles

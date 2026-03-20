@@ -13,6 +13,7 @@ graph TD
     
     subgraph "Logic & Processing"
         Utils --> Validation[Pydantic Validation]
+        Utils --> XAI[SHAP Local Explanations]
         Utils --> BusinessLogic[Risk Classification]
         Utils --> Export[Excel/CSV Generation]
     end

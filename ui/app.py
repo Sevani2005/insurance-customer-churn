@@ -19,7 +19,11 @@ from src.config import (
     GENDER_MAP, AUTO_RENEWAL_MAP, DISCOUNT_MAP, PAYMENT_MAP,
     POLICY_TYPE_MAP, REGION_MAP, PAGE_TITLE, PAGE_ICON, CUSTOM_CSS
 )
-from src.utils import classify_risk, get_risk_badge_html, apply_custom_styles, validate_input, plot_feature_importance, generate_excel_report
+from src.utils import (
+    classify_risk, get_risk_badge_html, apply_custom_styles, 
+    validate_input, plot_feature_importance, generate_excel_report,
+    plot_prediction_explanation
+)
 from src.logger import logger
 
 # -----------------------------
@@ -132,6 +136,10 @@ with st.sidebar:
                 <div style="font-size: 0.8rem; color: #6366f1;">{entry['prob']:.1f}% Probability</div>
             </div>
             """, unsafe_allow_html=True)
+        
+        if st.button("Clear History", use_container_width=True):
+            st.session_state.prediction_history = []
+            st.rerun()
 
 # Create tabs for different features
 tab1, tab2, tab3 = st.tabs(["Single Customer Prediction", "Batch Customer Analysis", "What-If Simulation"])
@@ -306,8 +314,15 @@ with tab1:
 
         # Feature Importance section
         st.markdown('<div class="section-header">Decision Factors</div>', unsafe_allow_html=True)
-        fig_imp = plot_feature_importance(model, feature_cols)
-        st.plotly_chart(fig_imp, use_container_width=True)
+        
+        col_global, col_local = st.columns(2)
+        with col_global:
+            fig_imp = plot_feature_importance(model, feature_cols)
+            st.plotly_chart(fig_imp, use_container_width=True)
+        
+        with col_local:
+            fig_local = plot_prediction_explanation(model, input_df)
+            st.plotly_chart(fig_local, use_container_width=True)
 
 
 # ============================================================================

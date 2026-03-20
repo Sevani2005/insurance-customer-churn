@@ -9,7 +9,7 @@ This repository features an end-to-end Machine Learning solution for predicting 
 The system is designed with **Industrial Standards** in mind, featuring:
 - **Modularity**: Clean separation of UI, business logic, and configuration.
 - **Robustness**: Pydantic-based input validation and comprehensive logging.
-- **Explainability (XAI)**: Feature importance visualizations to understand "why" a customer is at risk.
+- **Explainability (XAI)**: SHAP-based local explanations to see exactly why an individual customer is at risk, alongside global feature importance.
 - **Simulation**: A "What-If" tool for business stakeholders to test retention strategies.
 
 ## 🏗️ System Architecture
